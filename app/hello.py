@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from random import randrange
 import psycopg2
 from psycopg2.extras import RealDictCursor
+from . import schema
 
 
 # 
@@ -55,7 +56,7 @@ def get_posts():
     return res
 
 
-# fonction to create users
+# fonction to create posts
 @app.post('/posts')
 def create_post(new_post:Post):
     cur.execute(""" INSERT INTO posts(title,content,published) VALUES (%s,%s,%s) RETURNING * """,
@@ -144,5 +145,22 @@ def update_post(id: int,post:Post):
        return post_dict
 
 
+@app.post('/users')
+def create_users(new_users:schema.Users):
 
+     
+        cur.execute(""" INSERT INTO users(email,password) VALUES (%s,%s) RETURNING * """,
+                (new_users.email,new_users.password))
+        if not schema.email:
+             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                                 detail=f'the with id{id} post was not found')
+       
+        post_users=cur.fetchone()
+
+        con.commit(
+             
+        )
+   
+    
+        return {"users": post_users}
 
