@@ -6,3 +6,7 @@ class  Users(BaseModel):
     password:str
 
 
+class Usersout(BaseModel):
+    id:int
+    email:EmailStr
+

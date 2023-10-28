@@ -1,7 +1,7 @@
 from fastapi import FastAPI,Body,status,HTTPException,Response
 from typing  import Optional
 from pydantic import BaseModel
-from random import randrange
+from passlib.context import CryptContext
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from . import schema
@@ -9,7 +9,8 @@ from . import schema
 
 # 
 
-
+# code for hashing user password in the database
+pwd_context= CryptContext(schemes=['bcrypt'],deprecated='auto')
 
 app = FastAPI()
 
@@ -148,12 +149,13 @@ def update_post(id: int,post:Post):
 @app.post('/users')
 def create_users(new_users:schema.Users):
 
-     
+         # hasht the password user.password
+        hashed_pwd = pwd_context.hash(new_users.password)
+        new_users.password = hashed_pwd
+        
         cur.execute(""" INSERT INTO users(email,password) VALUES (%s,%s) RETURNING * """,
                 (new_users.email,new_users.password))
-        if not schema.email:
-             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                 detail=f'the with id{id} post was not found')
+        
        
         post_users=cur.fetchone()
 
