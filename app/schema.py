@@ -1,5 +1,14 @@
 from pydantic import BaseModel
 from pydantic import EmailStr
+from typing import Optional
+
+
+# creating the post schema
+class Post(BaseModel):
+    title: str
+    content: str
+    published :Optional[bool]
+
 
 class  Users(BaseModel):
     email: EmailStr

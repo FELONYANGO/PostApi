@@ -10,15 +10,11 @@ from . import schema
 # 
 
 # code for hashing user password in the database
-pwd_context= CryptContext(schemes=['bcrypt'],deprecated='auto')
+
 
 app = FastAPI()
 
-# creating the post schema
-class Post(BaseModel):
-    title: str
-    content: str
-    published :Optional[bool]
+
    
 # connect to the database
 
@@ -48,23 +44,9 @@ my_posts=[]
 def root():
     return {'root':'this is the root home page'}
 
-# the function to retrieve posts
-@app.get('/posts/')
-def get_posts():
-    cur.execute('SELECT * FROM posts')
-    res= cur.fetchall()
-   
-    return res
 
 
-# fonction to create posts
-@app.post('/posts')
-def create_post(new_post:Post):
-    cur.execute(""" INSERT INTO posts(title,content,published) VALUES (%s,%s,%s) RETURNING * """,
-               (new_post.title,new_post.content,new_post.published))
-    post_content=cur.fetchone()
-    con.commit()
-    return {"posts": post_content}
+
 
 
 # function to get specific id
@@ -75,16 +57,7 @@ def get_id(id):
 
     
 
-# the function to retrieve single post
-@app.get('/posts/{id}')
-def get_post(id:int):
-    cur.execute("SELECT * FROM posts WHERE id= %s",(str(id)))
-    conn= cur.fetchone()
-    if not conn:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f'post of id {id} not fount')
 
-    return conn
 
 
 
@@ -99,70 +72,22 @@ def get_id_post(id):
             return i
 
 
-@app.put('/posts/{id}')
-def update_post(id: int,post:Post):
-        cur.execute(""" UPDATE posts SET title=%s, content=%s,published=%s WHERE id=%s  RETURNING *""",
-                   (post.title,post.content,post.published,str(id)))
-        updated_post=cur.fetchone()
-        print(updated_post)
-        con.commit()
-       
-        if updated_post == None :
-             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                 detail=f'the with id{id} post was not found')
      
-        return {'message': updated_post}
-
-
-
-# function to delete post
-@app.delete('/posts/{id}',status_code=status.HTTP_204_NO_CONTENT)
-def delete_post(id: int):
-    cur.execute('DELETE  FROM posts WHERE id=%s returning *',(str(id)))
-    indexs = cur.fetchone()
-    con.commit()
-    if indexs==None:
-         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                             detail=f'pst with id {id} does not exist')
-    
-    return Response(status_code=status.HTTP_200_OK)
-    
-        
     
 
-@app.put('/posts/{id}',status_code=status.HTTP_204_NO_CONTENT)
-def update_post(id: int,post:Post):
+# @app.put('/posts/{id}',status_code=status.HTTP_204_NO_CONTENT)
+# def update_post(id: int,post:Post):
      
-       indexs = get_id_post(id)
+#        indexs = get_id_post(id)
      
-       if indexs == None:
+#        if indexs == None:
        
-            raise HTTPException( status.HTTP_204_NO_CONTENT,detail=f'post with {id} does not exist')
+#             raise HTTPException( status.HTTP_204_NO_CONTENT,detail=f'post with {id} does not exist')
     
-       post_dict = post.model_dump()  
-       post_dict['id'] = id
-       post_dict = my_posts[indexs] 
-       print(type(post_dict))
-       return post_dict
+#        post_dict = post.model_dump()  
+#        post_dict['id'] = id
+#        post_dict = my_posts[indexs] 
+#        print(type(post_dict))
+#        return post_dict
 
-
-@app.post('/users')
-def create_users(new_users:schema.Users):
-
-         # hasht the password user.password
-        hashed_pwd = pwd_context.hash(new_users.password)
-        new_users.password = hashed_pwd
-        
-        cur.execute(""" INSERT INTO users(email,password) VALUES (%s,%s) RETURNING * """,
-                (new_users.email,new_users.password))
-        
-       
-        post_users=cur.fetchone()
-
-        con.commit(
-             
-        )
-   
-    
-        return {"users": post_users}
 
