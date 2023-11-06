@@ -1,10 +1,11 @@
 from fastapi import FastAPI,Body,status,HTTPException,Response
 from typing  import Optional
 from pydantic import BaseModel
-from passlib.context import CryptContext
+
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from . import schema
+from . import posts,users,auth
+
 
 
 # 
@@ -38,8 +39,12 @@ except Exception as error:
 # since our code right now only save our data into the  memory,,we want to store it into an array
 my_posts=[]
 
+app.include_router(posts.router)
+app.include_router(users.router)
+app.include_router(auth.router)
 
 # the  root view function
+
 @app.get('/')
 def root():
     return {'root':'this is the root home page'}

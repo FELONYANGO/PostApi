@@ -19,3 +19,10 @@ class Usersout(BaseModel):
     id:int
     email:EmailStr
 
+
+class userloggins(BaseModel):
+    email:EmailStr
+    password:str
+
+
+
