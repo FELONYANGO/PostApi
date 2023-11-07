@@ -36,12 +36,12 @@ def create_users(new_users:schema.Users):
         return {"users": post_users}
 # retreive users with id
 @router.get('/{id}')
-def  user_with_id(id = int):
-        main.cur.execute("SELECT * FROM posts WHERE id= %s",(str(id)))
-        conn= main.hello.cur.fetchone()
+def  user_with_id(id : int):
+        main.cur.execute("SELECT * FROM users WHERE id= %s",(id,))
+        conn= main.cur.fetchone()
         if not conn:
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f'post of id {id} not fount')
+                            detail=f'user of id {id} not fount')
 
         return conn
 
