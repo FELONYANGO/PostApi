@@ -1,5 +1,5 @@
 from fastapi import Depends,APIRouter,Response,status,HTTPException
-from . import schema,utils,main
+from . import schema,utils,main,auth2
 
 
 router= APIRouter(  
@@ -14,6 +14,7 @@ def login(user_details:schema.userloggins):
    
     email= conn['email']
     passwords= conn['password']
+    id=conn['id']
     
     if conn is None:
         # Add some logging to understand what's happening
@@ -27,3 +28,6 @@ def login(user_details:schema.userloggins):
         print("Invalid credentials.")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid credentials')
     
+    access_token=auth2.createToken(data={'id':id})
+
+    return {"access_token":access_token, "token_type":"bearer token"}
