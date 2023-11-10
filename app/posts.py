@@ -1,9 +1,10 @@
 from . import  main
-from fastapi import FastAPI,Body,status,HTTPException,Response,APIRouter
+from fastapi import FastAPI,Body,status,HTTPException,Response,APIRouter,Depends
 from passlib.context import CryptContext
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from . import schema
+from . import schema,auth2
+from fastapi.security import oauth2
 
 router = APIRouter(
     prefix='/posts',
@@ -20,11 +21,12 @@ def get_posts():
 
 # fonction to create posts
 @router.post('/')
-def create_post(new_post:schema.Post):
+def create_post(new_post:schema.Post,user_id:int =Depends(auth2.get_current_user)):
     main.cur.execute(""" INSERT INTO posts(title,content,published) VALUES (%s,%s,%s) RETURNING * """,
                (new_post.title,new_post.content,new_post.published))
     post_content=main.cur.fetchone()
     main.con.commit()
+    print(user_id)
     return {"posts": post_content}
 
 

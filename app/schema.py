@@ -24,5 +24,13 @@ class userloggins(BaseModel):
     email:EmailStr
     password:str
 
+class Token(BaseModel):
+    token:str
+    tokentype:str
+
+class TokenData(BaseModel):
+    id:Optional[str]
+
+
 
 
