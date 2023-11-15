@@ -7,7 +7,7 @@ router= APIRouter(
    tags=['authentication']
 )
 
-@router.post('/login')
+@router.post('/login',response_model=schema.Token)
 def login(user_details:schema.userloggins):
     user = main.cur.execute("""SELECT * FROM users WHERE email = %s""",(user_details.email,))
     conn = main.cur.fetchone()
@@ -30,4 +30,4 @@ def login(user_details:schema.userloggins):
     
     access_token=auth2.createToken(data={'id':id})
 
-    return {"access_token":access_token, "token_type":"bearer token"}
+    return {"access_token": access_token, "token_type": "bearer token"}

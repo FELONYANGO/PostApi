@@ -3,33 +3,33 @@ from pydantic import EmailStr
 from typing import Optional
 
 
-# creating the post schema
 class Post(BaseModel):
-    title: str
-    content: str
-    published :Optional[bool]
-
-
+    title:str
+    content:str
+    published:bool = True
+# User login credentials
 class  Users(BaseModel):
     email: EmailStr
     password:str
 
-
-class Usersout(BaseModel):
-    id:int
-    email:EmailStr
-
-
+    
 class userloggins(BaseModel):
     email:EmailStr
     password:str
 
-class Token(BaseModel):
-    token:str
-    tokentype:str
+# User server response on login.for te dev environment only
+class Usersout(BaseModel):
+    id:int
+    email:EmailStr
 
+# token format retarned when user create a token
+class Token(BaseModel):
+    access_token:str
+    token_type:str
+
+# token data when decoded duri
 class TokenData(BaseModel):
-    id:Optional[str]
+    id:Optional[int]
 
 
 
